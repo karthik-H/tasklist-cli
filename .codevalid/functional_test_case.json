@@ -1,0 +1,1239 @@
+{
+  "function": [
+    {
+      "implementation_id": "cli_add_task",
+      "test_cases": [
+        {
+          "id": "no_arguments_provided",
+          "name": "test_no_arguments_provided",
+          "description": "Should print usage message and return when no arguments are provided.",
+          "type": "negative",
+          "test_setup": {
+            "given": "No CLI arguments are passed to add_task.",
+            "when": "add_task is called with an empty argument list.",
+            "then": "Usage message is printed and function returns without calling service.create_task."
+          },
+          "implementation_id": "cli_add_task"
+        },
+        {
+          "id": "only_title_provided",
+          "name": "test_only_title_provided",
+          "description": "Should create a task with only the title, default description, priority, and due_date.",
+          "type": "positive",
+          "test_setup": {
+            "given": "Arguments: ['Buy milk']",
+            "when": "add_task is called.",
+            "then": "service.create_task is called with title='Buy milk', description='', priority='MEDIUM', due_date=None. Success message is printed."
+          },
+          "implementation_id": "cli_add_task"
+        },
+        {
+          "id": "title_and_description_provided",
+          "name": "test_title_and_description_provided",
+          "description": "Should create a task with title and description when --desc is provided.",
+          "type": "positive",
+          "test_setup": {
+            "given": "Arguments: ['Buy milk', '--desc', '2 liters of milk']",
+            "when": "add_task is called.",
+            "then": "service.create_task is called with title='Buy milk', description='2 liters of milk', priority='MEDIUM', due_date=None. Success message is printed."
+          },
+          "implementation_id": "cli_add_task"
+        },
+        {
+          "id": "title_and_priority_provided",
+          "name": "test_title_and_priority_provided",
+          "description": "Should create a task with title and custom priority when --priority is provided.",
+          "type": "positive",
+          "test_setup": {
+            "given": "Arguments: ['Buy milk', '--priority', 'HIGH']",
+            "when": "add_task is called.",
+            "then": "service.create_task is called with title='Buy milk', description='', priority='HIGH', due_date=None. Success message is printed."
+          },
+          "implementation_id": "cli_add_task"
+        },
+        {
+          "id": "title_and_due_date_provided",
+          "name": "test_title_and_due_date_provided",
+          "description": "Should create a task with title and due date when --due is provided.",
+          "type": "positive",
+          "test_setup": {
+            "given": "Arguments: ['Buy milk', '--due', '2026-01-10']",
+            "when": "add_task is called.",
+            "then": "service.create_task is called with title='Buy milk', description='', priority='MEDIUM', due_date='2026-01-10'. Success message is printed."
+          },
+          "implementation_id": "cli_add_task"
+        },
+        {
+          "id": "all_options_provided",
+          "name": "test_all_options_provided",
+          "description": "Should create a task with all fields set when all options are provided.",
+          "type": "positive",
+          "test_setup": {
+            "given": "Arguments: ['Buy milk', '--desc', '2 liters', '--priority', 'LOW', '--due', '2026-01-10']",
+            "when": "add_task is called.",
+            "then": "service.create_task is called with title='Buy milk', description='2 liters', priority='LOW', due_date='2026-01-10'. Success message is printed."
+          },
+          "implementation_id": "cli_add_task"
+        },
+        {
+          "id": "invalid_priority_value",
+          "name": "test_invalid_priority_value",
+          "description": "Should handle invalid priority value gracefully.",
+          "type": "negative",
+          "test_setup": {
+            "given": "Arguments: ['Buy milk', '--priority', 'URGENT'] (assuming only LOW, MEDIUM, HIGH are valid)",
+            "when": "add_task is called.",
+            "then": "Error message about invalid priority is printed. service.create_task is not called."
+          },
+          "implementation_id": "cli_add_task"
+        },
+        {
+          "id": "invalid_due_date_format",
+          "name": "test_invalid_due_date_format",
+          "description": "Should handle invalid due date format gracefully.",
+          "type": "negative",
+          "test_setup": {
+            "given": "Arguments: ['Buy milk', '--due', '10-01-2026'] (assuming YYYY-MM-DD is required)",
+            "when": "add_task is called.",
+            "then": "Error message about invalid due date format is printed. service.create_task is not called."
+          },
+          "implementation_id": "cli_add_task"
+        },
+        {
+          "id": "missing_value_after_flag",
+          "name": "test_missing_value_after_flag",
+          "description": "Should handle missing value after a flag (e.g., --desc, --priority, --due).",
+          "type": "negative",
+          "test_setup": {
+            "given": "Arguments: ['Buy milk', '--desc']",
+            "when": "add_task is called.",
+            "then": "Error message about missing value is printed. service.create_task is not called."
+          },
+          "implementation_id": "cli_add_task"
+        },
+        {
+          "id": "multiple_flags_order_variation",
+          "name": "test_multiple_flags_order_variation",
+          "description": "Should correctly parse arguments regardless of the order of flags.",
+          "type": "positive",
+          "test_setup": {
+            "given": "Arguments: ['Buy milk', '--priority', 'LOW', '--desc', '2 liters', '--due', '2026-01-10']",
+            "when": "add_task is called.",
+            "then": "service.create_task is called with title='Buy milk', description='2 liters', priority='LOW', due_date='2026-01-10'. Success message is printed."
+          },
+          "implementation_id": "cli_add_task"
+        },
+        {
+          "id": "extra_unrecognized_flag",
+          "name": "test_extra_unrecognized_flag",
+          "description": "Should handle unrecognized flags gracefully.",
+          "type": "negative",
+          "test_setup": {
+            "given": "Arguments: ['Buy milk', '--foo', 'bar']",
+            "when": "add_task is called.",
+            "then": "Error message about unrecognized flag is printed. service.create_task is not called."
+          },
+          "implementation_id": "cli_add_task"
+        },
+        {
+          "id": "empty_title_string",
+          "name": "test_empty_title_string",
+          "description": "Should handle empty string as title.",
+          "type": "negative",
+          "test_setup": {
+            "given": "Arguments: ['']",
+            "when": "add_task is called.",
+            "then": "Error message about missing or empty title is printed. service.create_task is not called."
+          },
+          "implementation_id": "cli_add_task"
+        },
+        {
+          "id": "title_max_length",
+          "name": "test_title_max_length",
+          "description": "Should handle title at maximum allowed length.",
+          "type": "edge",
+          "test_setup": {
+            "given": "Arguments: ['T.repeat(255)'] (assuming 255 is the max length for title)",
+            "when": "add_task is called.",
+            "then": "service.create_task is called with the long title. Success message is printed."
+          },
+          "implementation_id": "cli_add_task"
+        },
+        {
+          "id": "title_exceeds_max_length",
+          "name": "test_title_exceeds_max_length",
+          "description": "Should handle title exceeding maximum allowed length.",
+          "type": "negative",
+          "test_setup": {
+            "given": "Arguments: ['T.repeat(256)'] (assuming 255 is the max length for title)",
+            "when": "add_task is called.",
+            "then": "Error message about title length is printed. service.create_task is not called."
+          },
+          "implementation_id": "cli_add_task"
+        },
+        {
+          "id": "description_max_length",
+          "name": "test_description_max_length",
+          "description": "Should handle description at maximum allowed length.",
+          "type": "edge",
+          "test_setup": {
+            "given": "Arguments: ['Buy milk', '--desc', 'D.repeat(1024)'] (assuming 1024 is the max length for description)",
+            "when": "add_task is called.",
+            "then": "service.create_task is called with the long description. Success message is printed."
+          },
+          "implementation_id": "cli_add_task"
+        },
+        {
+          "id": "description_exceeds_max_length",
+          "name": "test_description_exceeds_max_length",
+          "description": "Should handle description exceeding maximum allowed length.",
+          "type": "negative",
+          "test_setup": {
+            "given": "Arguments: ['Buy milk', '--desc', 'D.repeat(1025)'] (assuming 1024 is the max length for description)",
+            "when": "add_task is called.",
+            "then": "Error message about description length is printed. service.create_task is not called."
+          },
+          "implementation_id": "cli_add_task"
+        }
+      ]
+    },
+    {
+      "implementation_id": "service_create_task",
+      "test_cases": [
+        {
+          "id": "create_task_valid_all_fields",
+          "name": "test_create_task_with_all_valid_fields",
+          "description": "Verify that a task is created successfully when all required fields (title, description, priority, due_date) are provided with valid values.",
+          "type": "positive",
+          "test_setup": {
+            "given": {
+              "title": "Buy groceries",
+              "description": "Milk, eggs, bread",
+              "priority": 2,
+              "due_date": "2026-01-10"
+            },
+            "when": "create_task is called with the above parameters",
+            "then": "A Task object is returned with the correct attributes and is stored in the tasks dictionary"
+          },
+          "implementation_id": "service_create_task"
+        },
+        {
+          "id": "create_task_missing_title",
+          "name": "test_create_task_missing_title",
+          "description": "Verify that the function raises an error when the title is missing.",
+          "type": "negative",
+          "test_setup": {
+            "given": {
+              "title": null,
+              "description": "No title provided",
+              "priority": 1,
+              "due_date": "2026-01-10"
+            },
+            "when": "create_task is called with a missing title",
+            "then": "An error is raised indicating that the title is required"
+          },
+          "implementation_id": "service_create_task"
+        },
+        {
+          "id": "create_task_empty_title",
+          "name": "test_create_task_empty_title",
+          "description": "Verify that the function raises an error when the title is an empty string.",
+          "type": "negative",
+          "test_setup": {
+            "given": {
+              "title": "",
+              "description": "Empty title",
+              "priority": 1,
+              "due_date": "2026-01-10"
+            },
+            "when": "create_task is called with an empty title",
+            "then": "An error is raised indicating that the title cannot be empty"
+          },
+          "implementation_id": "service_create_task"
+        },
+        {
+          "id": "create_task_long_title",
+          "name": "test_create_task_long_title",
+          "description": "Verify that the function handles a very long title (boundary condition).",
+          "type": "edge",
+          "test_setup": {
+            "given": {
+              "title": "T.repeat(255)",
+              "description": "Long title test",
+              "priority": 1,
+              "due_date": "2026-01-10"
+            },
+            "when": "create_task is called with a 255-character title",
+            "then": "A Task object is created if the system allows, or an error is raised if there is a length restriction"
+          },
+          "implementation_id": "service_create_task"
+        },
+        {
+          "id": "create_task_missing_description",
+          "name": "test_create_task_missing_description",
+          "description": "Verify that the function handles a missing description (if allowed).",
+          "type": "edge",
+          "test_setup": {
+            "given": {
+              "title": "Task without description",
+              "description": null,
+              "priority": 1,
+              "due_date": "2026-01-10"
+            },
+            "when": "create_task is called with a missing description",
+            "then": "A Task object is created with an empty or default description, or an error is raised if description is required"
+          },
+          "implementation_id": "service_create_task"
+        },
+        {
+          "id": "create_task_invalid_priority_type",
+          "name": "test_create_task_invalid_priority_type",
+          "description": "Verify that the function raises an error when priority is not an integer.",
+          "type": "negative",
+          "test_setup": {
+            "given": {
+              "title": "Invalid priority",
+              "description": "Priority is a string",
+              "priority": "high",
+              "due_date": "2026-01-10"
+            },
+            "when": "create_task is called with a non-integer priority",
+            "then": "An error is raised indicating that priority must be an integer"
+          },
+          "implementation_id": "service_create_task"
+        },
+        {
+          "id": "create_task_priority_boundary",
+          "name": "test_create_task_priority_boundary",
+          "description": "Verify that the function handles the lowest and highest allowed priority values.",
+          "type": "edge",
+          "test_setup": {
+            "given": {
+              "title": "Low priority",
+              "description": "Priority is minimum allowed",
+              "priority": 1,
+              "due_date": "2026-01-10"
+            },
+            "when": "create_task is called with the minimum allowed priority",
+            "then": "A Task object is created with priority 1"
+          },
+          "implementation_id": "service_create_task"
+        },
+        {
+          "id": "create_task_priority_out_of_range",
+          "name": "test_create_task_priority_out_of_range",
+          "description": "Verify that the function raises an error when priority is outside the allowed range.",
+          "type": "negative",
+          "test_setup": {
+            "given": {
+              "title": "Priority too high",
+              "description": "Priority is out of range",
+              "priority": 10,
+              "due_date": "2026-01-10"
+            },
+            "when": "create_task is called with priority 10 (assuming max is less)",
+            "then": "An error is raised indicating that priority is out of range"
+          },
+          "implementation_id": "service_create_task"
+        },
+        {
+          "id": "create_task_invalid_due_date_format",
+          "name": "test_create_task_invalid_due_date_format",
+          "description": "Verify that the function raises an error when due_date is not in a valid date format.",
+          "type": "negative",
+          "test_setup": {
+            "given": {
+              "title": "Invalid due date",
+              "description": "Due date is not a date",
+              "priority": 1,
+              "due_date": "not-a-date"
+            },
+            "when": "create_task is called with an invalid due_date format",
+            "then": "An error is raised indicating that due_date must be a valid date"
+          },
+          "implementation_id": "service_create_task"
+        },
+        {
+          "id": "create_task_past_due_date",
+          "name": "test_create_task_past_due_date",
+          "description": "Verify that the function raises an error or warning when due_date is in the past.",
+          "type": "edge",
+          "test_setup": {
+            "given": {
+              "title": "Past due date",
+              "description": "Due date is in the past",
+              "priority": 1,
+              "due_date": "2020-01-01"
+            },
+            "when": "create_task is called with a past due_date",
+            "then": "An error or warning is raised, or the Task is created depending on business rules"
+          },
+          "implementation_id": "service_create_task"
+        },
+        {
+          "id": "create_task_duplicate_title",
+          "name": "test_create_task_duplicate_title",
+          "description": "Verify that the function handles creation of a task with a title that already exists.",
+          "type": "edge",
+          "test_setup": {
+            "given": {
+              "title": "Duplicate Task",
+              "description": "First instance",
+              "priority": 1,
+              "due_date": "2026-01-10"
+            },
+            "when": "create_task is called twice with the same title",
+            "then": "Either both tasks are created (if allowed), or an error is raised for duplicate title"
+          },
+          "implementation_id": "service_create_task"
+        },
+        {
+          "id": "create_task_minimal_fields",
+          "name": "test_create_task_minimal_fields",
+          "description": "Verify that the function creates a task when only the required fields are provided.",
+          "type": "positive",
+          "test_setup": {
+            "given": {
+              "title": "Minimal Task",
+              "description": "",
+              "priority": 1,
+              "due_date": "2026-01-10"
+            },
+            "when": "create_task is called with only required fields",
+            "then": "A Task object is created with default or empty values for optional fields"
+          },
+          "implementation_id": "service_create_task"
+        },
+        {
+          "id": "create_task_store_in_tasks_dict",
+          "name": "test_task_is_stored_in_tasks_dict",
+          "description": "Verify that the created Task object is stored in the tasks dictionary.",
+          "type": "positive",
+          "test_setup": {
+            "given": {
+              "title": "Storage Test",
+              "description": "Check storage",
+              "priority": 1,
+              "due_date": "2026-01-10"
+            },
+            "when": "create_task is called",
+            "then": "The returned Task object is present in the tasks dictionary with the correct key"
+          },
+          "implementation_id": "service_create_task"
+        }
+      ]
+    },
+    {
+      "implementation_id": "cli_update_task",
+      "test_cases": [
+        {
+          "id": "no_arguments_provided",
+          "name": "test_no_arguments_provided",
+          "description": "Should print usage message and return when no arguments are provided.",
+          "type": "negative",
+          "test_setup": {
+            "given": "No arguments passed to update_task.",
+            "when": "update_task([]) is called.",
+            "then": "Usage message is printed and function returns without calling service layer."
+          },
+          "implementation_id": "cli_update_task"
+        },
+        {
+          "id": "update_title_only",
+          "name": "test_update_title_only",
+          "description": "Should update only the title of the task.",
+          "type": "positive",
+          "test_setup": {
+            "given": "A valid task with id '1' exists.",
+            "when": "update_task(['1', '--title', 'New Title']) is called.",
+            "then": "service.update_task is called with task_id='1', title='New Title', other fields None; prints success message."
+          },
+          "implementation_id": "cli_update_task"
+        },
+        {
+          "id": "update_all_fields",
+          "name": "test_update_all_fields",
+          "description": "Should update all fields of the task.",
+          "type": "positive",
+          "test_setup": {
+            "given": "A valid task with id '2' exists.",
+            "when": "update_task(['2', '--title', 'T2', '--desc', 'D2', '--status', 'Completed', '--priority', 'High', '--due', '2026-01-10']) is called.",
+            "then": "service.update_task is called with all updated values; prints success message."
+          },
+          "implementation_id": "cli_update_task"
+        },
+        {
+          "id": "invalid_status_value",
+          "name": "test_invalid_status_value",
+          "description": "Should handle invalid status value.",
+          "type": "negative",
+          "test_setup": {
+            "given": "A valid task with id '3' exists.",
+            "when": "update_task(['3', '--status', 'InProgress']) is called.",
+            "then": "Status validation fails; error message is printed; service.update_task is not called."
+          },
+          "implementation_id": "cli_update_task"
+        },
+        {
+          "id": "invalid_priority_value",
+          "name": "test_invalid_priority_value",
+          "description": "Should handle invalid priority value.",
+          "type": "negative",
+          "test_setup": {
+            "given": "A valid task with id '4' exists.",
+            "when": "update_task(['4', '--priority', 'Urgent']) is called.",
+            "then": "Priority validation fails; error message is printed; service.update_task is not called."
+          },
+          "implementation_id": "cli_update_task"
+        },
+        {
+          "id": "invalid_due_date_format",
+          "name": "test_invalid_due_date_format",
+          "description": "Should handle invalid due date format.",
+          "type": "negative",
+          "test_setup": {
+            "given": "A valid task with id '5' exists.",
+            "when": "update_task(['5', '--due', '10-01-2026']) is called.",
+            "then": "Due date validation fails; error message is printed; service.update_task is not called."
+          },
+          "implementation_id": "cli_update_task"
+        },
+        {
+          "id": "task_not_found",
+          "name": "test_task_not_found",
+          "description": "Should print not found message if task does not exist.",
+          "type": "negative",
+          "test_setup": {
+            "given": "No task with id '999' exists.",
+            "when": "update_task(['999', '--title', 'Any']) is called.",
+            "then": "service.update_task returns not found; prints not found message."
+          },
+          "implementation_id": "cli_update_task"
+        },
+        {
+          "id": "update_description_only",
+          "name": "test_update_description_only",
+          "description": "Should update only the description of the task.",
+          "type": "positive",
+          "test_setup": {
+            "given": "A valid task with id '6' exists.",
+            "when": "update_task(['6', '--desc', 'Updated description']) is called.",
+            "then": "service.update_task is called with updated description; prints success message."
+          },
+          "implementation_id": "cli_update_task"
+        },
+        {
+          "id": "update_status_to_completed",
+          "name": "test_update_status_to_completed",
+          "description": "Should update status to Completed.",
+          "type": "positive",
+          "test_setup": {
+            "given": "A valid task with id '7' exists.",
+            "when": "update_task(['7', '--status', 'Completed']) is called.",
+            "then": "service.update_task is called with status='Completed'; prints success message."
+          },
+          "implementation_id": "cli_update_task"
+        },
+        {
+          "id": "update_priority_to_low",
+          "name": "test_update_priority_to_low",
+          "description": "Should update priority to Low.",
+          "type": "positive",
+          "test_setup": {
+            "given": "A valid task with id '8' exists.",
+            "when": "update_task(['8', '--priority', 'Low']) is called.",
+            "then": "service.update_task is called with priority='Low'; prints success message."
+          },
+          "implementation_id": "cli_update_task"
+        },
+        {
+          "id": "update_due_date_valid_format",
+          "name": "test_update_due_date_valid_format",
+          "description": "Should update due date with valid format.",
+          "type": "positive",
+          "test_setup": {
+            "given": "A valid task with id '9' exists.",
+            "when": "update_task(['9', '--due', '2026-12-31']) is called.",
+            "then": "service.update_task is called with due_date='2026-12-31'; prints success message."
+          },
+          "implementation_id": "cli_update_task"
+        },
+        {
+          "id": "multiple_same_field_arguments",
+          "name": "test_multiple_same_field_arguments",
+          "description": "Should use the last value when multiple arguments for the same field are provided.",
+          "type": "edge",
+          "test_setup": {
+            "given": "A valid task with id '10' exists.",
+            "when": "update_task(['10', '--title', 'First', '--title', 'Second']) is called.",
+            "then": "service.update_task is called with title='Second'; prints success message."
+          },
+          "implementation_id": "cli_update_task"
+        },
+        {
+          "id": "unknown_argument_ignored",
+          "name": "test_unknown_argument_ignored",
+          "description": "Should ignore unknown arguments.",
+          "type": "edge",
+          "test_setup": {
+            "given": "A valid task with id '11' exists.",
+            "when": "update_task(['11', '--foo', 'bar', '--title', 'Valid']) is called.",
+            "then": "Unknown argument '--foo' is ignored; service.update_task is called with title='Valid'; prints success message."
+          },
+          "implementation_id": "cli_update_task"
+        },
+        {
+          "id": "empty_string_title",
+          "name": "test_empty_string_title",
+          "description": "Should handle empty string as title.",
+          "type": "edge",
+          "test_setup": {
+            "given": "A valid task with id '12' exists.",
+            "when": "update_task(['12', '--title', '']) is called.",
+            "then": "service.update_task is called with title=''; prints success message or error depending on business rules."
+          },
+          "implementation_id": "cli_update_task"
+        },
+        {
+          "id": "update_with_minimum_arguments",
+          "name": "test_update_with_minimum_arguments",
+          "description": "Should update with only task_id and one field.",
+          "type": "positive",
+          "test_setup": {
+            "given": "A valid task with id '13' exists.",
+            "when": "update_task(['13', '--priority', 'Medium']) is called.",
+            "then": "service.update_task is called with priority='Medium'; prints success message."
+          },
+          "implementation_id": "cli_update_task"
+        }
+      ]
+    },
+    {
+      "implementation_id": "service_update_task",
+      "test_cases": [
+        {
+          "id": "update_all_fields_success",
+          "name": "Update all fields of an existing task successfully",
+          "description": "Verify that all updatable fields (title, description, status, priority, due_date) are updated and updated_at is set when all are provided for an existing task.",
+          "type": "positive",
+          "test_setup": {
+            "given": "A task with id=1 exists. Input: task_id=1, title='New Title', description='New Desc', status='Completed', priority='High', due_date='2026-01-10'.",
+            "when": "update_task is called with all fields provided.",
+            "then": "Returns True. Task fields are updated accordingly. updated_at is set to current time."
+          },
+          "implementation_id": "service_update_task"
+        },
+        {
+          "id": "update_partial_fields_success",
+          "name": "Update only some fields of an existing task",
+          "description": "Verify that only provided fields are updated and others remain unchanged.",
+          "type": "positive",
+          "test_setup": {
+            "given": "A task with id=2 exists. Input: task_id=2, title='Partial Update', status='Pending'.",
+            "when": "update_task is called with only title and status.",
+            "then": "Returns True. Only title and status are updated. Other fields remain unchanged. updated_at is set."
+          },
+          "implementation_id": "service_update_task"
+        },
+        {
+          "id": "update_no_fields_provided",
+          "name": "Call update_task with no updatable fields provided",
+          "description": "Verify that updated_at is still set even if no updatable fields are provided.",
+          "type": "edge",
+          "test_setup": {
+            "given": "A task with id=3 exists. Input: task_id=3, no other fields.",
+            "when": "update_task is called with only task_id.",
+            "then": "Returns True. No fields except updated_at are changed."
+          },
+          "implementation_id": "service_update_task"
+        },
+        {
+          "id": "update_task_not_found",
+          "name": "Attempt to update a non-existent task",
+          "description": "Verify that the function returns False if the task does not exist.",
+          "type": "negative",
+          "test_setup": {
+            "given": "No task with id=999 exists. Input: task_id=999, title='Should Fail'.",
+            "when": "update_task is called.",
+            "then": "Returns False. No changes are made."
+          },
+          "implementation_id": "service_update_task"
+        },
+        {
+          "id": "update_only_title",
+          "name": "Update only the title of an existing task",
+          "description": "Verify that only the title is updated and updated_at is set.",
+          "type": "positive",
+          "test_setup": {
+            "given": "A task with id=4 exists. Input: task_id=4, title='Title Only'.",
+            "when": "update_task is called.",
+            "then": "Returns True. Only title and updated_at are changed."
+          },
+          "implementation_id": "service_update_task"
+        },
+        {
+          "id": "update_only_description",
+          "name": "Update only the description of an existing task",
+          "description": "Verify that only the description is updated and updated_at is set.",
+          "type": "positive",
+          "test_setup": {
+            "given": "A task with id=5 exists. Input: task_id=5, description='Desc Only'.",
+            "when": "update_task is called.",
+            "then": "Returns True. Only description and updated_at are changed."
+          },
+          "implementation_id": "service_update_task"
+        },
+        {
+          "id": "update_only_status",
+          "name": "Update only the status of an existing task",
+          "description": "Verify that only the status is updated and updated_at is set.",
+          "type": "positive",
+          "test_setup": {
+            "given": "A task with id=6 exists. Input: task_id=6, status='Completed'.",
+            "when": "update_task is called.",
+            "then": "Returns True. Only status and updated_at are changed."
+          },
+          "implementation_id": "service_update_task"
+        },
+        {
+          "id": "update_only_priority",
+          "name": "Update only the priority of an existing task",
+          "description": "Verify that only the priority is updated and updated_at is set.",
+          "type": "positive",
+          "test_setup": {
+            "given": "A task with id=7 exists. Input: task_id=7, priority='Low'.",
+            "when": "update_task is called.",
+            "then": "Returns True. Only priority and updated_at are changed."
+          },
+          "implementation_id": "service_update_task"
+        },
+        {
+          "id": "update_only_due_date",
+          "name": "Update only the due_date of an existing task",
+          "description": "Verify that only the due_date is updated and updated_at is set.",
+          "type": "positive",
+          "test_setup": {
+            "given": "A task with id=8 exists. Input: task_id=8, due_date='2026-01-15'.",
+            "when": "update_task is called.",
+            "then": "Returns True. Only due_date and updated_at are changed."
+          },
+          "implementation_id": "service_update_task"
+        },
+        {
+          "id": "update_with_invalid_status",
+          "name": "Update with an invalid status value",
+          "description": "Verify behavior when an invalid status value is provided (if validation exists).",
+          "type": "negative",
+          "test_setup": {
+            "given": "A task with id=9 exists. Input: task_id=9, status='UnknownStatus'.",
+            "when": "update_task is called.",
+            "then": "Returns False or raises validation error if status is invalid. No changes are made."
+          },
+          "implementation_id": "service_update_task"
+        },
+        {
+          "id": "update_with_invalid_due_date_format",
+          "name": "Update with an invalid due_date format",
+          "description": "Verify behavior when due_date is not in the expected format (if validation exists).",
+          "type": "negative",
+          "test_setup": {
+            "given": "A task with id=10 exists. Input: task_id=10, due_date='invalid-date'.",
+            "when": "update_task is called.",
+            "then": "Returns False or raises validation error if due_date is invalid. No changes are made."
+          },
+          "implementation_id": "service_update_task"
+        },
+        {
+          "id": "update_with_empty_title",
+          "name": "Update with an empty title",
+          "description": "Verify behavior when title is set to an empty string (if validation exists).",
+          "type": "edge",
+          "test_setup": {
+            "given": "A task with id=11 exists. Input: task_id=11, title=''.",
+            "when": "update_task is called.",
+            "then": "Returns True or raises validation error depending on requirements. Title is updated to empty or rejected."
+          },
+          "implementation_id": "service_update_task"
+        },
+        {
+          "id": "update_with_long_title",
+          "name": "Update with a very long title",
+          "description": "Verify behavior when title is at the maximum allowed length.",
+          "type": "edge",
+          "test_setup": {
+            "given": "A task with id=12 exists. Input: task_id=12, title='T.repeat(255)'.",
+            "when": "update_task is called.",
+            "then": "Returns True if within allowed length. Title is updated."
+          },
+          "implementation_id": "service_update_task"
+        },
+        {
+          "id": "update_with_null_fields",
+          "name": "Update with fields explicitly set to null",
+          "description": "Verify that fields set to null are ignored and not updated.",
+          "type": "edge",
+          "test_setup": {
+            "given": "A task with id=13 exists. Input: task_id=13, title=null, description=null, status=null, priority=null, due_date=null.",
+            "when": "update_task is called.",
+            "then": "Returns True. No fields except updated_at are changed."
+          },
+          "implementation_id": "service_update_task"
+        }
+      ]
+    },
+    {
+      "implementation_id": "cli_delete_task",
+      "test_cases": [
+        {
+          "id": "delete_no_arguments",
+          "name": "test_delete_task_no_arguments",
+          "description": "Should print usage message and return when no arguments are provided.",
+          "type": "negative",
+          "test_setup": {
+            "given": "No arguments are passed to delete_task.",
+            "when": "delete_task([]) is called.",
+            "then": "Usage message is printed and function returns without calling service.delete_task."
+          },
+          "implementation_id": "cli_delete_task"
+        },
+        {
+          "id": "delete_valid_task",
+          "name": "test_delete_task_valid_id",
+          "description": "Should delete an existing task and print success message.",
+          "type": "positive",
+          "test_setup": {
+            "given": "A valid task ID is provided and the task exists in the system.",
+            "when": "delete_task([valid_task_id]) is called.",
+            "then": "service.delete_task is called with valid_task_id, returns success, and success message is printed."
+          },
+          "implementation_id": "cli_delete_task"
+        },
+        {
+          "id": "delete_nonexistent_task",
+          "name": "test_delete_task_nonexistent_id",
+          "description": "Should print not found message when trying to delete a non-existent task.",
+          "type": "negative",
+          "test_setup": {
+            "given": "A task ID is provided that does not exist in the system.",
+            "when": "delete_task([nonexistent_task_id]) is called.",
+            "then": "service.delete_task is called with nonexistent_task_id, returns failure, and not found message is printed."
+          },
+          "implementation_id": "cli_delete_task"
+        },
+        {
+          "id": "delete_task_id_is_empty_string",
+          "name": "test_delete_task_id_empty_string",
+          "description": "Should handle empty string as task ID and print not found message.",
+          "type": "edge",
+          "test_setup": {
+            "given": "An empty string is provided as the task ID.",
+            "when": "delete_task(['']) is called.",
+            "then": "service.delete_task is called with empty string, returns failure, and not found message is printed."
+          },
+          "implementation_id": "cli_delete_task"
+        },
+        {
+          "id": "delete_task_id_is_special_characters",
+          "name": "test_delete_task_id_special_characters",
+          "description": "Should handle special characters as task ID and print not found message.",
+          "type": "edge",
+          "test_setup": {
+            "given": "A string with special characters is provided as the task ID.",
+            "when": "delete_task(['!@#$%^&*']) is called.",
+            "then": "service.delete_task is called with special characters, returns failure, and not found message is printed."
+          },
+          "implementation_id": "cli_delete_task"
+        },
+        {
+          "id": "delete_task_id_is_numeric_string",
+          "name": "test_delete_task_id_numeric_string",
+          "description": "Should handle numeric string as task ID and delete if exists.",
+          "type": "positive",
+          "test_setup": {
+            "given": "A numeric string representing a valid task ID is provided and exists.",
+            "when": "delete_task(['123']) is called.",
+            "then": "service.delete_task is called with '123', returns success, and success message is printed."
+          },
+          "implementation_id": "cli_delete_task"
+        },
+        {
+          "id": "delete_task_id_is_long_string",
+          "name": "test_delete_task_id_long_string",
+          "description": "Should handle very long string as task ID and print not found message.",
+          "type": "edge",
+          "test_setup": {
+            "given": "A very long string is provided as the task ID.",
+            "when": "delete_task(['T.repeat(1000)']) is called.",
+            "then": "service.delete_task is called with the long string, returns failure, and not found message is printed."
+          },
+          "implementation_id": "cli_delete_task"
+        },
+        {
+          "id": "delete_task_multiple_arguments",
+          "name": "test_delete_task_multiple_arguments",
+          "description": "Should use only the first argument as task ID and ignore the rest.",
+          "type": "edge",
+          "test_setup": {
+            "given": "Multiple arguments are provided, first is a valid task ID, others are ignored.",
+            "when": "delete_task([valid_task_id, 'extra_arg']) is called.",
+            "then": "service.delete_task is called with valid_task_id, returns success, and success message is printed. Extra arguments are ignored."
+          },
+          "implementation_id": "cli_delete_task"
+        }
+      ]
+    },
+    {
+      "implementation_id": "service_delete_task",
+      "test_cases": [
+        {
+          "id": "delete_existing_task",
+          "name": "test_delete_existing_task",
+          "description": "Deletes a task that exists in the tasks dictionary. Should return True and remove the task.",
+          "type": "positive",
+          "test_setup": {
+            "given": "A tasks dictionary containing a task with task_id '1'.",
+            "when": "delete_task('1') is called.",
+            "then": "Returns True and the task with id '1' is removed from the tasks dictionary."
+          },
+          "implementation_id": "service_delete_task"
+        },
+        {
+          "id": "delete_nonexistent_task",
+          "name": "test_delete_nonexistent_task",
+          "description": "Attempts to delete a task that does not exist in the tasks dictionary. Should return False.",
+          "type": "negative",
+          "test_setup": {
+            "given": "A tasks dictionary without a task with task_id '999'.",
+            "when": "delete_task('999') is called.",
+            "then": "Returns False and the tasks dictionary remains unchanged."
+          },
+          "implementation_id": "service_delete_task"
+        },
+        {
+          "id": "delete_task_empty_dict",
+          "name": "test_delete_task_empty_dict",
+          "description": "Attempts to delete a task from an empty tasks dictionary. Should return False.",
+          "type": "edge",
+          "test_setup": {
+            "given": "An empty tasks dictionary.",
+            "when": "delete_task('1') is called.",
+            "then": "Returns False and the tasks dictionary remains empty."
+          },
+          "implementation_id": "service_delete_task"
+        },
+        {
+          "id": "delete_task_multiple_tasks",
+          "name": "test_delete_task_multiple_tasks",
+          "description": "Deletes a task when multiple tasks exist. Only the specified task should be removed.",
+          "type": "positive",
+          "test_setup": {
+            "given": "A tasks dictionary with task_ids '1', '2', and '3'.",
+            "when": "delete_task('2') is called.",
+            "then": "Returns True and only the task with id '2' is removed; others remain."
+          },
+          "implementation_id": "service_delete_task"
+        },
+        {
+          "id": "delete_task_id_is_none",
+          "name": "test_delete_task_id_is_none",
+          "description": "Attempts to delete a task with task_id as None. Should return False.",
+          "type": "negative",
+          "test_setup": {
+            "given": "A tasks dictionary with valid task_ids.",
+            "when": "delete_task(None) is called.",
+            "then": "Returns False and the tasks dictionary remains unchanged."
+          },
+          "implementation_id": "service_delete_task"
+        },
+        {
+          "id": "delete_task_id_is_empty_string",
+          "name": "test_delete_task_id_is_empty_string",
+          "description": "Attempts to delete a task with an empty string as task_id. Should return False.",
+          "type": "edge",
+          "test_setup": {
+            "given": "A tasks dictionary with valid task_ids.",
+            "when": "delete_task('') is called.",
+            "then": "Returns False and the tasks dictionary remains unchanged."
+          },
+          "implementation_id": "service_delete_task"
+        },
+        {
+          "id": "delete_task_id_is_integer",
+          "name": "test_delete_task_id_is_integer",
+          "description": "Attempts to delete a task with an integer task_id when keys are strings. Should return False.",
+          "type": "edge",
+          "test_setup": {
+            "given": "A tasks dictionary with string task_ids, e.g., '1', '2'.",
+            "when": "delete_task(1) is called.",
+            "then": "Returns False and the tasks dictionary remains unchanged."
+          },
+          "implementation_id": "service_delete_task"
+        },
+        {
+          "id": "delete_task_id_special_characters",
+          "name": "test_delete_task_id_special_characters",
+          "description": "Attempts to delete a task with a task_id containing special characters. Should return False if not present.",
+          "type": "edge",
+          "test_setup": {
+            "given": "A tasks dictionary with task_ids not containing special characters.",
+            "when": "delete_task('@!#') is called.",
+            "then": "Returns False and the tasks dictionary remains unchanged."
+          },
+          "implementation_id": "service_delete_task"
+        },
+        {
+          "id": "delete_task_id_case_sensitivity",
+          "name": "test_delete_task_id_case_sensitivity",
+          "description": "Attempts to delete a task with a task_id that differs only in case. Should return False if not present.",
+          "type": "edge",
+          "test_setup": {
+            "given": "A tasks dictionary with task_id 'Task1'.",
+            "when": "delete_task('task1') is called.",
+            "then": "Returns False and the tasks dictionary remains unchanged."
+          },
+          "implementation_id": "service_delete_task"
+        },
+        {
+          "id": "delete_task_twice",
+          "name": "test_delete_task_twice",
+          "description": "Deletes a task and then attempts to delete it again. First call returns True, second returns False.",
+          "type": "edge",
+          "test_setup": {
+            "given": "A tasks dictionary with task_id '1'.",
+            "when": "delete_task('1') is called twice in succession.",
+            "then": "First call returns True and removes the task; second call returns False."
+          },
+          "implementation_id": "service_delete_task"
+        }
+      ]
+    },
+    {
+      "implementation_id": "cli_update_task_status",
+      "test_cases": [
+        {
+          "id": "update_status_to_completed_success",
+          "name": "test_update_status_to_completed_success",
+          "description": "Successfully updates a task's status to Completed when a valid '--status' argument is provided.",
+          "type": "positive",
+          "test_setup": {
+            "given": "A valid task ID and '--status' argument set to 'Completed'. The task exists in the system.",
+            "when": "update_task is called with '--status Completed'.",
+            "then": "The service layer receives TaskStatus.COMPLETED and the task's status is updated to Completed."
+          },
+          "implementation_id": "cli_update_task_status"
+        },
+        {
+          "id": "update_status_to_pending_success",
+          "name": "test_update_status_to_pending_success",
+          "description": "Successfully updates a task's status to Pending when a valid '--status' argument is provided.",
+          "type": "positive",
+          "test_setup": {
+            "given": "A valid task ID and '--status' argument set to 'Pending'. The task exists in the system.",
+            "when": "update_task is called with '--status Pending'.",
+            "then": "The service layer receives TaskStatus.PENDING and the task's status is updated to Pending."
+          },
+          "implementation_id": "cli_update_task_status"
+        },
+        {
+          "id": "update_status_missing_argument",
+          "name": "test_update_status_missing_argument",
+          "description": "Does not update the task's status if '--status' argument is not provided.",
+          "type": "edge",
+          "test_setup": {
+            "given": "A valid task ID but no '--status' argument.",
+            "when": "update_task is called without '--status'.",
+            "then": "The service layer is not called for status update; the task's status remains unchanged."
+          },
+          "implementation_id": "cli_update_task_status"
+        },
+        {
+          "id": "update_status_invalid_status_string",
+          "name": "test_update_status_invalid_status_string",
+          "description": "Handles invalid status string by raising an error or returning an appropriate message.",
+          "type": "negative",
+          "test_setup": {
+            "given": "A valid task ID and '--status' argument set to an invalid value (e.g., 'Done').",
+            "when": "update_task is called with '--status Done'.",
+            "then": "An error is raised or an error message is returned indicating invalid status value."
+          },
+          "implementation_id": "cli_update_task_status"
+        },
+        {
+          "id": "update_status_case_insensitivity",
+          "name": "test_update_status_case_insensitivity",
+          "description": "Handles case-insensitive status strings (e.g., 'completed', 'pending').",
+          "type": "edge",
+          "test_setup": {
+            "given": "A valid task ID and '--status' argument set to 'completed' (lowercase).",
+            "when": "update_task is called with '--status completed'.",
+            "then": "The service layer receives TaskStatus.COMPLETED and the task's status is updated to Completed."
+          },
+          "implementation_id": "cli_update_task_status"
+        },
+        {
+          "id": "update_status_whitespace_trim",
+          "name": "test_update_status_whitespace_trim",
+          "description": "Handles status strings with leading/trailing whitespace.",
+          "type": "edge",
+          "test_setup": {
+            "given": "A valid task ID and '--status' argument set to ' Completed '.",
+            "when": "update_task is called with '--status  Completed '.",
+            "then": "The service layer receives TaskStatus.COMPLETED and the task's status is updated to Completed."
+          },
+          "implementation_id": "cli_update_task_status"
+        },
+        {
+          "id": "update_status_nonexistent_task",
+          "name": "test_update_status_nonexistent_task",
+          "description": "Handles the case where the task ID does not exist.",
+          "type": "negative",
+          "test_setup": {
+            "given": "A non-existent task ID and a valid '--status' argument.",
+            "when": "update_task is called with a non-existent task ID.",
+            "then": "An error is raised or an error message is returned indicating the task was not found."
+          },
+          "implementation_id": "cli_update_task_status"
+        },
+        {
+          "id": "update_status_service_layer_failure",
+          "name": "test_update_status_service_layer_failure",
+          "description": "Handles service layer failure gracefully.",
+          "type": "negative",
+          "test_setup": {
+            "given": "A valid task ID and '--status' argument, but the service layer raises an exception.",
+            "when": "update_task is called and service.update_task raises an exception.",
+            "then": "An error is raised or an error message is returned indicating the update failed."
+          },
+          "implementation_id": "cli_update_task_status"
+        },
+        {
+          "id": "update_status_to_same_status",
+          "name": "test_update_status_to_same_status",
+          "description": "Handles updating a task to its current status (idempotency).",
+          "type": "edge",
+          "test_setup": {
+            "given": "A task already marked as Completed and '--status' argument set to 'Completed'.",
+            "when": "update_task is called with '--status Completed'.",
+            "then": "The service layer is called, but the task's status remains unchanged. No error is raised."
+          },
+          "implementation_id": "cli_update_task_status"
+        },
+        {
+          "id": "update_status_empty_status_string",
+          "name": "test_update_status_empty_status_string",
+          "description": "Handles empty status string as an invalid input.",
+          "type": "negative",
+          "test_setup": {
+            "given": "A valid task ID and '--status' argument set to an empty string.",
+            "when": "update_task is called with '--status \"\"'.",
+            "then": "An error is raised or an error message is returned indicating invalid status value."
+          },
+          "implementation_id": "cli_update_task_status"
+        }
+      ]
+    },
+    {
+      "implementation_id": "service_update_task_status",
+      "test_cases": [
+        {
+          "id": "update_status_valid_completed",
+          "name": "test_update_status_to_completed",
+          "description": "Update a task's status to 'Completed' using a valid TaskStatus enum value.",
+          "type": "positive",
+          "test_setup": {
+            "given": "A task object with status 'Pending' and a valid TaskStatus.COMPLETED enum value as status argument.",
+            "when": "update_task is called with the status argument set to TaskStatus.COMPLETED.",
+            "then": "The task's status is updated to 'Completed' and task.update_status is called with TaskStatus.COMPLETED."
+          },
+          "implementation_id": "service_update_task_status"
+        },
+        {
+          "id": "update_status_valid_pending",
+          "name": "test_update_status_to_pending",
+          "description": "Update a task's status to 'Pending' using a valid TaskStatus enum value.",
+          "type": "positive",
+          "test_setup": {
+            "given": "A task object with status 'Completed' and a valid TaskStatus.PENDING enum value as status argument.",
+            "when": "update_task is called with the status argument set to TaskStatus.PENDING.",
+            "then": "The task's status is updated to 'Pending' and task.update_status is called with TaskStatus.PENDING."
+          },
+          "implementation_id": "service_update_task_status"
+        },
+        {
+          "id": "update_status_none",
+          "name": "test_update_status_with_none",
+          "description": "Do not update the task's status if the status argument is None.",
+          "type": "edge",
+          "test_setup": {
+            "given": "A task object with any status and the status argument is None.",
+            "when": "update_task is called with status=None.",
+            "then": "The task's status remains unchanged and task.update_status is not called."
+          },
+          "implementation_id": "service_update_task_status"
+        },
+        {
+          "id": "update_status_invalid_enum",
+          "name": "test_update_status_with_invalid_enum",
+          "description": "Attempt to update the task's status with an invalid enum value.",
+          "type": "negative",
+          "test_setup": {
+            "given": "A task object and an invalid status argument (e.g., a string 'DONE' not in TaskStatus).",
+            "when": "update_task is called with status='DONE'.",
+            "then": "A ValueError or appropriate exception is raised, and the task's status is not updated."
+          },
+          "implementation_id": "service_update_task_status"
+        },
+        {
+          "id": "update_status_empty_string",
+          "name": "test_update_status_with_empty_string",
+          "description": "Attempt to update the task's status with an empty string as status.",
+          "type": "edge",
+          "test_setup": {
+            "given": "A task object and status argument is an empty string ('').",
+            "when": "update_task is called with status=''.",
+            "then": "A ValueError or appropriate exception is raised, and the task's status is not updated."
+          },
+          "implementation_id": "service_update_task_status"
+        },
+        {
+          "id": "update_status_invalid_type",
+          "name": "test_update_status_with_invalid_type",
+          "description": "Attempt to update the task's status with a non-enum, non-string type (e.g., integer).",
+          "type": "negative",
+          "test_setup": {
+            "given": "A task object and status argument is an integer (e.g., 1).",
+            "when": "update_task is called with status=1.",
+            "then": "A TypeError or appropriate exception is raised, and the task's status is not updated."
+          },
+          "implementation_id": "service_update_task_status"
+        },
+        {
+          "id": "update_status_already_set",
+          "name": "test_update_status_to_same_value",
+          "description": "Update the task's status to the same value it already has.",
+          "type": "edge",
+          "test_setup": {
+            "given": "A task object with status 'Completed' and status argument is TaskStatus.COMPLETED.",
+            "when": "update_task is called with status=TaskStatus.COMPLETED.",
+            "then": "The task's status remains 'Completed'. The function may or may not call update_status, but no error occurs."
+          },
+          "implementation_id": "service_update_task_status"
+        },
+        {
+          "id": "update_status_task_update_status_raises",
+          "name": "test_update_status_update_status_method_raises",
+          "description": "Simulate an exception raised by the task.update_status method.",
+          "type": "negative",
+          "test_setup": {
+            "given": "A task object whose update_status method raises an exception when called.",
+            "when": "update_task is called with a valid status argument.",
+            "then": "The exception is propagated or handled as per implementation, and the function does not silently ignore the error."
+          },
+          "implementation_id": "service_update_task_status"
+        }
+      ]
+    }
+  ],
+  "component": [],
+  "endpoint": []
+}
