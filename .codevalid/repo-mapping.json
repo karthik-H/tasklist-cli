@@ -1,0 +1,73 @@
+{
+  "manage_tasks": {
+    "implementation": [
+      {
+        "id": "cli_add_task",
+        "name": "add_task",
+        "file_path": "cli.py",
+        "type": "function",
+        "How_is_it_connected_to_implementation": "Handles the CLI command for adding a new task. Parses user input for title, description, priority, and due date, then calls the service layer to create the task.",
+        "pseudo_code": "IF no arguments provided\n    PRINT usage message\n    RETURN\nSET title from first argument\nSET description to empty string\nSET priority to MEDIUM\nSET due_date to None\nFOR each argument after the first\n    IF argument is '--desc'\n        SET description\n    IF argument is '--priority'\n        SET priority (validate value)\n    IF argument is '--due'\n        SET due_date (validate format)\nCALL service.create_task(title, description, priority, due_date)\nPRINT task creation success and details"
+      },
+      {
+        "id": "service_create_task",
+        "name": "create_task",
+        "file_path": "services.py",
+        "type": "function",
+        "How_is_it_connected_to_implementation": "Implements the business logic for creating a new task. Instantiates a Task object and stores it.",
+        "pseudo_code": "CREATE Task object with title, description, priority, due_date\nSTORE Task in tasks dictionary\nRETURN Task object"
+      },
+      {
+        "id": "cli_update_task",
+        "name": "update_task",
+        "file_path": "cli.py",
+        "type": "function",
+        "How_is_it_connected_to_implementation": "Handles the CLI command for editing an existing task. Parses arguments for fields to update and calls the service layer.",
+        "pseudo_code": "IF no arguments provided\n    PRINT usage message\n    RETURN\nSET task_id from first argument\nINITIALIZE title, description, status, priority, due_date to None\nFOR each argument after the first\n    IF argument is '--title'\n        SET title\n    IF argument is '--desc'\n        SET description\n    IF argument is '--status'\n        SET status (validate value)\n    IF argument is '--priority'\n        SET priority (validate value)\n    IF argument is '--due'\n        SET due_date (validate format)\nCALL service.update_task(task_id, title, description, status, priority, due_date)\nIF update successful\n    PRINT success\nELSE\n    PRINT not found"
+      },
+      {
+        "id": "service_update_task",
+        "name": "update_task",
+        "file_path": "services.py",
+        "type": "function",
+        "How_is_it_connected_to_implementation": "Implements the business logic for updating a task. Updates fields if provided and sets updated_at.",
+        "pseudo_code": "GET Task by task_id\nIF not found\n    RETURN False\nIF title provided\n    UPDATE task.title\nIF description provided\n    UPDATE task.description\nIF status provided\n    UPDATE task.status\nIF priority provided\n    UPDATE task.priority\nIF due_date provided\n    UPDATE task.due_date\nUPDATE task.updated_at\nRETURN True"
+      },
+      {
+        "id": "cli_delete_task",
+        "name": "delete_task",
+        "file_path": "cli.py",
+        "type": "function",
+        "How_is_it_connected_to_implementation": "Handles the CLI command for deleting a task. Passes the task ID to the service layer.",
+        "pseudo_code": "IF no arguments provided\n    PRINT usage message\n    RETURN\nSET task_id from first argument\nCALL service.delete_task(task_id)\nIF delete successful\n    PRINT success\nELSE\n    PRINT not found"
+      },
+      {
+        "id": "service_delete_task",
+        "name": "delete_task",
+        "file_path": "services.py",
+        "type": "function",
+        "How_is_it_connected_to_implementation": "Implements the business logic for deleting a task. Removes the task from the tasks dictionary.",
+        "pseudo_code": "IF task_id not in tasks\n    RETURN False\nDELETE task from tasks dictionary\nRETURN True"
+      },
+      {
+        "id": "cli_update_task_status",
+        "name": "update_task (status update logic)",
+        "file_path": "cli.py",
+        "type": "function",
+        "How_is_it_connected_to_implementation": "Handles marking a task as Completed or Pending by parsing the '--status' argument and passing it to the service layer.",
+        "pseudo_code": "IF '--status' argument provided\n    MAP status string to TaskStatus enum\n    PASS status to service.update_task"
+      },
+      {
+        "id": "service_update_task_status",
+        "name": "update_task (status update logic)",
+        "file_path": "services.py",
+        "type": "function",
+        "How_is_it_connected_to_implementation": "Updates the status of a task using the TaskStatus enum.",
+        "pseudo_code": "IF status argument is not None\n    CALL task.update_status(status)"
+      }
+    ],
+    "missing_implementations": [
+      "A new task must include tag"
+    ]
+  }
+}
